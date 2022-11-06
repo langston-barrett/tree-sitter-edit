@@ -1,8 +1,8 @@
 [package]
 name = "tree-sitter-edit"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
-description = "TODO"
+description = "A crate for printing modified tree-sitter parse trees, intended for use in multi-language code refactoring, linting, or modification (codemod) tools."
 keywords = ["codemod", "linting", "parsing", "refactoring", "tree-sitter"]
 authors = ["Langston Barrett <langston.barrett@gmail.com>"]
 license = "MIT"
