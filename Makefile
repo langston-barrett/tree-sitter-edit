@@ -6,6 +6,9 @@ DL = $(shell ls ./**/*.dl)
 RS = $(shell ls ./**/*.rs)
 TOML = $(shell ls ./**/*.toml)
 
+.PHONY: all
+all: build doc fmt lint test
+
 .PHONY: build
 build:
 	$(CARGO) $(CARGO_FLAGS) build
@@ -13,6 +16,10 @@ build:
 .PHONY: check
 check:
 	$(CARGO) check $(CARGO_FLAGS)
+
+.PHONY: doc
+doc:
+	$(CARGO) doc $(CARGO_FLAGS)
 
 .PHONY: entr
 entr:
@@ -41,6 +48,3 @@ static:
 .PHONY: test
 test:
 	$(CARGO) test $(CARGO_FLAGS)
-
-.PHONY: all
-all: build check fmt lint test
