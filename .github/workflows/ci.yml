@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+env:
+  # The NAME makes it easier to copy/paste snippets from other CI configs
+  NAME: tree-sitter-edit
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Format
+      run: cargo fmt && git diff --exit-code
+    - name: Deps
+      run: |
+        rustup update
+        rustup component add clippy
+    - name: Lint
+      run: make lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - run: make build
+    - run: make test

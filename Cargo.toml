@@ -1,0 +1,17 @@
+[package]
+name = "tree-sitter-edit"
+version = "0.0.0"
+edition = "2021"
+description = "TODO"
+keywords = ["codemod", "linting", "parsing", "refactoring", "tree-sitter"]
+authors = ["Langston Barrett <langston.barrett@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/langston-barrett/tree-sitter-edit"
+repository = "https://github.com/langston-barrett/tree-sitter-edit"
+
+[dev-dependencies]
+tree-sitter-c = "0.20"
+
+[dependencies]
+tree-sitter = "0.20"
