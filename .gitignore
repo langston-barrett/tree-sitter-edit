@@ -1,7 +1,2 @@
-/*.dl
+Cargo.lock
 /target
-/venv
-
-# Produced by CI during release builds, need to be ignored so Cargo will publish.
-souffle-lint
-souffle-lint*.deb
