@@ -10,11 +10,15 @@ pub trait Editor {
 
     /// Does this editor have an edit for some descendant of this node?
     fn contains_edit(&self, tree: &Tree, node: &Node) -> bool {
-        if self.has_edit(tree, node) {
-            return true;
+        let mut nodes = Vec::with_capacity(node.child_count());
+        nodes.push(*node);
+        while let Some(node) = nodes.pop() {
+            if self.has_edit(tree, &node) {
+                return true;
+            }
+            nodes.extend(node.children(&mut tree.walk()));
         }
-        node.children(&mut tree.walk())
-            .any(|c| self.contains_edit(tree, &c))
+        false
     }
 
     /// Edit this node (precondition: [`Editor::has_edit`]).
