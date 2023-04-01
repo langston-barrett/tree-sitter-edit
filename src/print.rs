@@ -14,21 +14,24 @@ struct Edit {
 }
 
 fn collect_edits(tree: &Tree, node: &Node, source: &[u8], editor: &impl Editor) -> Vec<Edit> {
-    if !editor.contains_edit(tree, node) {
-        Vec::new()
-    } else if editor.has_edit(tree, node) {
-        debug_assert!(node.end_byte() >= node.start_byte());
-        vec![Edit {
-            position: node.start_byte(),
-            deleted_length: node.end_byte() - node.start_byte(),
-            inserted_text: editor.edit(source, tree, node),
-        }]
-    } else {
-        // TODO: can overflow on super deep ASTs
-        node.children(&mut tree.walk())
-            .flat_map(|c| collect_edits(tree, &c, source, editor))
-            .collect()
+    let mut edits = Vec::new();
+    let mut nodes = Vec::new();
+    nodes.push(*node);
+    while let Some(node) = nodes.pop() {
+        if !editor.contains_edit(tree, &node) {
+            continue;
+        } else if editor.has_edit(tree, &node) {
+            debug_assert!(node.end_byte() >= node.start_byte());
+            edits.push(Edit {
+                position: node.start_byte(),
+                deleted_length: node.end_byte() - node.start_byte(),
+                inserted_text: editor.edit(source, tree, &node),
+            });
+        } else {
+            nodes.extend(node.children(&mut tree.walk()));
+        }
     }
+    edits
 }
 
 fn merge_edits(w: &mut impl Write, source: &[u8], edits: &[Edit]) -> Result<bool, io::Error> {
