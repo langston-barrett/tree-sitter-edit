@@ -24,15 +24,16 @@ fn collect_edits(tree: &Tree, node: &Node, source: &[u8], editor: &impl Editor) 
             inserted_text: editor.edit(source, tree, node),
         }]
     } else {
+        // TODO: can overflow on super deep ASTs
         node.children(&mut tree.walk())
             .flat_map(|c| collect_edits(tree, &c, source, editor))
             .collect()
     }
 }
 
-fn merge_edits(w: &mut impl Write, source: &[u8], edits: Vec<Edit>) -> Result<bool, io::Error> {
+fn merge_edits(w: &mut impl Write, source: &[u8], edits: &[Edit]) -> Result<bool, io::Error> {
     let mut start = 0;
-    for edit in &edits {
+    for edit in edits {
         w.write_all(&source[start..edit.position])?;
         w.write_all(&edit.inserted_text)?;
         start = edit.position + edit.deleted_length;
@@ -41,6 +42,9 @@ fn merge_edits(w: &mut impl Write, source: &[u8], edits: Vec<Edit>) -> Result<bo
     Ok(!edits.is_empty())
 }
 
+/// # Errors
+///
+/// Errors if [`write!`] returns an error.
 pub fn render(
     w: &mut impl Write,
     tree: &Tree,
@@ -48,7 +52,7 @@ pub fn render(
     editor: &impl Editor,
 ) -> Result<bool, io::Error> {
     let edits = collect_edits(tree, &tree.root_node(), source, editor);
-    merge_edits(w, source, edits)
+    merge_edits(w, source, edits.as_slice())
 }
 
 #[cfg(test)]

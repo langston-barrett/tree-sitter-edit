@@ -7,12 +7,14 @@ use crate::editor::Editor;
 pub struct Id {}
 
 impl Id {
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
 }
 
 impl Editor for Id {
+    #[must_use]
     fn has_edit(&self, _tree: &Tree, _node: &Node) -> bool {
         false
     }

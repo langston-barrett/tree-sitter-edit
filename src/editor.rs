@@ -17,6 +17,6 @@ pub trait Editor {
             .any(|c| self.contains_edit(tree, &c))
     }
 
-    /// Edit this node (precondition: [Editor::has_edit]).
+    /// Edit this node (precondition: [`Editor::has_edit`]).
     fn edit(&self, source: &[u8], tree: &Tree, node: &Node) -> Vec<u8>;
 }

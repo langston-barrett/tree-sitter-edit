@@ -10,12 +10,14 @@ pub struct Delete {
 }
 
 impl Delete {
+    #[must_use]
     pub fn new(id: NodeId) -> Self {
         Delete { id }
     }
 }
 
 impl Editor for Delete {
+    #[must_use]
     fn has_edit(&self, _tree: &Tree, node: &Node) -> bool {
         self.id.is(node)
     }
