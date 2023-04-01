@@ -4,3 +4,20 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    assignees:
+      - "langston-barrett"
+    labels:
+      - "infrastructure"
+    reviewers:
+      - "langston-barrett"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "langston-barrett"
+    labels:
+      - "infrastructure"
+    reviewers:
+      - "langston-barrett"
