@@ -5,9 +5,9 @@ use tree_sitter::Tree;
 
 use crate::editor::Editor;
 
-/// Do an in-order traversal of the tree. If a node has no edits, print it
-/// as-is. If a node contains an edit, recurse into it. If an edit applies
-/// to a node, print it instead of the node.
+/// Render edits from [`Editor::in_order_edits`].
+///
+/// If an edit begins inside of a previous edit, then skip it.
 ///
 /// # Errors
 ///
@@ -20,27 +20,15 @@ pub fn render(
 ) -> Result<bool, io::Error> {
     let mut changed = false;
     let mut start = 0;
-    let mut nodes = Vec::new();
-    nodes.push(tree.root_node());
-    while let Some(node) = nodes.pop() {
-        if editor.has_edit(tree, &node) {
-            let node_end = node.end_byte();
-            let node_start = node.start_byte();
-            debug_assert!(node_end >= node_start);
-            debug_assert!(start <= node_start);
-            changed = true;
-            // Write everything up to the start of this edit
-            w.write_all(&source[start..node_start])?;
-            w.write_all(&editor.edit(source, tree, &node))?;
-            start = node.end_byte();
-        } else {
-            // Gather the children in reverse order
-            let count = node.child_count();
-            nodes.reserve_exact(count);
-            for i in 0..count {
-                nodes.push(node.child(count - 1 - i).unwrap());
-            }
+    for edit in editor.in_order_edits(source, tree) {
+        if edit.position < start {
+            continue;
         }
+        changed = true;
+        // Write everything up to the start of this edit
+        w.write_all(&source[start..edit.position])?;
+        w.write_all(&edit.insert)?;
+        start = edit.position + edit.delete;
     }
     w.write_all(&source[start..source.len()])?;
     Ok(changed)

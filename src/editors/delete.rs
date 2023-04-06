@@ -1,6 +1,7 @@
 use tree_sitter::{Node, Tree};
+use tree_sitter_traversal::{traverse, Order};
 
-use crate::editor::Editor;
+use crate::editor::{Edit, Editor};
 use crate::id::NodeId;
 
 /// An [Editor] that deletes the text of a single [Node].
@@ -25,5 +26,17 @@ impl Editor for Delete {
     fn edit(&self, _source: &[u8], tree: &Tree, node: &Node) -> Vec<u8> {
         debug_assert!(self.has_edit(tree, node));
         Vec::new()
+    }
+
+    fn in_order_edits(&self, _source: &[u8], tree: &Tree) -> Box<dyn Iterator<Item = Edit> + '_> {
+        if let Some(node) = traverse(tree.walk(), Order::Pre).find(|n| NodeId::new(n) == self.id) {
+            Box::new(std::iter::once(Edit {
+                position: node.start_byte(),
+                delete: node.end_byte() - node.start_byte(),
+                insert: Vec::new(),
+            }))
+        } else {
+            Box::new(std::iter::empty())
+        }
     }
 }
