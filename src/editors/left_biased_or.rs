@@ -15,11 +15,11 @@ where
 }
 
 impl<L: Editor, R: Editor> Editor for LeftBiasedOr<L, R> {
-    fn has_edit(&self, tree: &Tree, node: &Node) -> bool {
+    fn has_edit(&self, tree: &Tree, node: &Node<'_>) -> bool {
         self.left.has_edit(tree, node) || self.right.has_edit(tree, node)
     }
 
-    fn edit(&self, source: &[u8], tree: &Tree, node: &Node) -> Vec<u8> {
+    fn edit(&self, source: &[u8], tree: &Tree, node: &Node<'_>) -> Vec<u8> {
         debug_assert!(self.has_edit(tree, node));
         if self.left.has_edit(tree, node) {
             self.left.edit(source, tree, node)

@@ -87,7 +87,7 @@ mod tests {
         assert_eq!("", vec_str(&r))
     }
 
-    fn find_kind(tree: &Tree, node: &Node, kind: &str) -> Option<NodeId> {
+    fn find_kind(tree: &Tree, node: &Node<'_>, kind: &str) -> Option<NodeId> {
         if node.kind() == kind {
             return Some(NodeId::new(node));
         }

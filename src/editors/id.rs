@@ -15,11 +15,11 @@ impl Id {
 
 impl Editor for Id {
     #[must_use]
-    fn has_edit(&self, _tree: &Tree, _node: &Node) -> bool {
+    fn has_edit(&self, _tree: &Tree, _node: &Node<'_>) -> bool {
         false
     }
 
-    fn edit(&self, _source: &[u8], _tree: &Tree, _node: &Node) -> Vec<u8> {
+    fn edit(&self, _source: &[u8], _tree: &Tree, _node: &Node<'_>) -> Vec<u8> {
         debug_assert!(false);
         Vec::new()
     }
