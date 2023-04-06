@@ -19,11 +19,11 @@ impl Delete {
 
 impl Editor for Delete {
     #[must_use]
-    fn has_edit(&self, _tree: &Tree, node: &Node) -> bool {
+    fn has_edit(&self, _tree: &Tree, node: &Node<'_>) -> bool {
         self.id.is(node)
     }
 
-    fn edit(&self, _source: &[u8], tree: &Tree, node: &Node) -> Vec<u8> {
+    fn edit(&self, _source: &[u8], tree: &Tree, node: &Node<'_>) -> Vec<u8> {
         debug_assert!(self.has_edit(tree, node));
         Vec::new()
     }

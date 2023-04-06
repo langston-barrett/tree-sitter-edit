@@ -10,7 +10,7 @@ pub struct NodeId {
 
 impl NodeId {
     #[must_use]
-    pub fn new(node: &Node) -> Self {
+    pub fn new(node: &Node<'_>) -> Self {
         NodeId { id: node.id() }
     }
 
@@ -20,7 +20,7 @@ impl NodeId {
     }
 
     #[must_use]
-    pub fn is(&self, node: &Node) -> bool {
+    pub fn is(&self, node: &Node<'_>) -> bool {
         node.id() == self.get()
     }
 }

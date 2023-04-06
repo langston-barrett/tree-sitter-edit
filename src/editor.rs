@@ -32,10 +32,10 @@ pub fn default_in_order<'a, E: Editor>(
 /// Modify a tree-sitter parse tree when printing.
 pub trait Editor {
     /// Does this editor have an edit for this node?
-    fn has_edit(&self, tree: &Tree, node: &Node) -> bool;
+    fn has_edit(&self, tree: &Tree, node: &Node<'_>) -> bool;
 
     /// Edit this node (precondition: [`Editor::has_edit`]).
-    fn edit(&self, source: &[u8], tree: &Tree, node: &Node) -> Vec<u8>;
+    fn edit(&self, source: &[u8], tree: &Tree, node: &Node<'_>) -> Vec<u8>;
 
     /// Get all edits to this tree, in order.
     ///
