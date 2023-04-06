@@ -23,7 +23,7 @@ jobs:
         rustup component add clippy
     - uses: Swatinem/rust-cache@6fd3edff6979b79f87531400ad694fb7f2c84b1f
     - name: Lint
-      run: make lint
+      run: cargo clippy --profile=ci -- --deny warnings
 
   test:
     runs-on: ubuntu-latest
@@ -31,5 +31,5 @@ jobs:
     - uses: actions/checkout@v3
     - run: make doc
     - uses: Swatinem/rust-cache@6fd3edff6979b79f87531400ad694fb7f2c84b1f
-    - run: make build
-    - run: make test
+    - run: env RUSTFLAGS="@$PWD/rustc-flags" cargo test --profile=ci --no-run
+    - run: env RUSTFLAGS="@$PWD/rustc-flags" cargo test --profile=ci
