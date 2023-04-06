@@ -2,6 +2,10 @@
 
 <!-- https://keepachangelog.com/en/1.0.0/ -->
 
+## [0.3.0] - 2023-04-06
+
+- Give a default implementation for `Editor::in_order_edits`
+
 ## [0.2.0] - 2023-04-06
 
 - Redesign `Editor` interface for efficiency
@@ -25,3 +29,4 @@ Initial release!
 [0.1.1]: https://github.com/langston-barrett/tree-sitter-edit/releases/tag/v0.1.1
 [0.1.2]: https://github.com/langston-barrett/tree-sitter-edit/releases/tag/v0.1.2
 [0.2.0]: https://github.com/langston-barrett/tree-sitter-edit/releases/tag/v0.2.0
+[0.3.0]: https://github.com/langston-barrett/tree-sitter-edit/releases/tag/v0.3.0
