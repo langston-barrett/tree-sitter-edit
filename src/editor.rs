@@ -11,24 +11,6 @@ pub struct Edit {
 // TODO(lb): Perhaps make an associated error type so that these operations can
 // fail?
 
-pub fn default_in_order<'a, E: Editor>(
-    editor: &'a E,
-    source: &'a [u8],
-    tree: &'a Tree,
-) -> impl Iterator<Item = Edit> + 'a {
-    traverse(tree.walk(), Order::Pre).filter_map(|n| {
-        if editor.has_edit(tree, &n) {
-            Some(Edit {
-                position: n.start_byte(),
-                delete: n.end_byte() - n.start_byte(),
-                insert: editor.edit(source, tree, &n),
-            })
-        } else {
-            None
-        }
-    })
-}
-
 /// Modify a tree-sitter parse tree when printing.
 pub trait Editor {
     /// Does this editor have an edit for this node?
@@ -46,5 +28,17 @@ pub trait Editor {
         &'a self,
         source: &'a [u8],
         tree: &'a Tree,
-    ) -> Box<dyn Iterator<Item = Edit> + 'a>;
+    ) -> Box<dyn Iterator<Item = Edit> + 'a> {
+        Box::new(traverse(tree.walk(), Order::Pre).filter_map(|n| {
+            if self.has_edit(tree, &n) {
+                Some(Edit {
+                    position: n.start_byte(),
+                    delete: n.end_byte() - n.start_byte(),
+                    insert: self.edit(source, tree, &n),
+                })
+            } else {
+                None
+            }
+        }))
+    }
 }
