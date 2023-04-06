@@ -1,50 +1,14 @@
 use std::io;
 use std::io::Write;
 
-use tree_sitter::{Node, Tree};
+use tree_sitter::Tree;
 
 use crate::editor::Editor;
 
-#[derive(Debug)]
-struct Edit {
-    // from node.start_byte()
-    position: usize,
-    deleted_length: usize,
-    inserted_text: Vec<u8>,
-}
-
-fn collect_edits(tree: &Tree, node: &Node, source: &[u8], editor: &impl Editor) -> Vec<Edit> {
-    let mut edits = Vec::new();
-    let mut nodes = Vec::new();
-    nodes.push(*node);
-    while let Some(node) = nodes.pop() {
-        if !editor.contains_edit(tree, &node) {
-            continue;
-        } else if editor.has_edit(tree, &node) {
-            debug_assert!(node.end_byte() >= node.start_byte());
-            edits.push(Edit {
-                position: node.start_byte(),
-                deleted_length: node.end_byte() - node.start_byte(),
-                inserted_text: editor.edit(source, tree, &node),
-            });
-        } else {
-            nodes.extend(node.children(&mut tree.walk()));
-        }
-    }
-    edits
-}
-
-fn merge_edits(w: &mut impl Write, source: &[u8], edits: &[Edit]) -> Result<bool, io::Error> {
-    let mut start = 0;
-    for edit in edits {
-        w.write_all(&source[start..edit.position])?;
-        w.write_all(&edit.inserted_text)?;
-        start = edit.position + edit.deleted_length;
-    }
-    w.write_all(&source[start..source.len()])?;
-    Ok(!edits.is_empty())
-}
-
+/// Do an in-order traversal of the tree. If a node has no edits, print it
+/// as-is. If a node contains an edit, recurse into it. If an edit applies
+/// to a node, print it instead of the node.
+///
 /// # Errors
 ///
 /// Errors if [`write!`] returns an error.
@@ -54,12 +18,40 @@ pub fn render(
     source: &[u8],
     editor: &impl Editor,
 ) -> Result<bool, io::Error> {
-    let edits = collect_edits(tree, &tree.root_node(), source, editor);
-    merge_edits(w, source, edits.as_slice())
+    let mut changed = false;
+    let mut start = 0;
+    let mut nodes = Vec::new();
+    nodes.push(tree.root_node());
+    while let Some(node) = nodes.pop() {
+        if !editor.contains_edit(tree, &node) {
+            continue;
+        } else if editor.has_edit(tree, &node) {
+            let node_end = node.end_byte();
+            let node_start = node.start_byte();
+            debug_assert!(node_end >= node_start);
+            debug_assert!(start <= node_start);
+            changed = true;
+            // Write everything up to the start of this edit
+            w.write_all(&source[start..node_start])?;
+            w.write_all(&editor.edit(source, tree, &node))?;
+            start = node.end_byte();
+        } else {
+            // Gather the children in reverse order
+            let count = node.child_count();
+            nodes.reserve_exact(count);
+            for i in 0..count {
+                nodes.push(node.child(count - 1 - i).unwrap());
+            }
+        }
+    }
+    w.write_all(&source[start..source.len()])?;
+    Ok(changed)
 }
 
 #[cfg(test)]
 mod tests {
+    use tree_sitter::Node;
+
     use super::*;
     use crate::editors::{Delete, Id, Replace};
     use crate::id::NodeId;
@@ -131,6 +123,20 @@ mod tests {
             bytes: "1".as_bytes().to_vec(),
         };
         let edited = r#"int main(int argc, char *argv[]) { return 1; }"#;
+        let r = do_render(&tree, src, &editor);
+        assert_eq!(edited, vec_str(&r))
+    }
+
+    #[test]
+    fn parse_then_render_replace_binary_expr_bigger() {
+        let src = r#"int main(int argc, char *argv[]) { return 0 + 0; }"#;
+        let tree = parse(src);
+        let binop = find_kind(&tree, &tree.root_node(), "binary_expression").unwrap();
+        let editor = Replace {
+            id: binop,
+            bytes: "100 + 100000".as_bytes().to_vec(),
+        };
+        let edited = r#"int main(int argc, char *argv[]) { return 100 + 100000; }"#;
         let r = do_render(&tree, src, &editor);
         assert_eq!(edited, vec_str(&r))
     }
