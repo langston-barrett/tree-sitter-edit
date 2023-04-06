@@ -23,9 +23,7 @@ pub fn render(
     let mut nodes = Vec::new();
     nodes.push(tree.root_node());
     while let Some(node) = nodes.pop() {
-        if !editor.contains_edit(tree, &node) {
-            continue;
-        } else if editor.has_edit(tree, &node) {
+        if editor.has_edit(tree, &node) {
             let node_end = node.end_byte();
             let node_start = node.start_byte();
             debug_assert!(node_end >= node_start);
