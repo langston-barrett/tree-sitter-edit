@@ -1,6 +1,6 @@
 use tree_sitter::{Node, Tree};
 
-use crate::editor::Editor;
+use crate::editor::{default_in_order, Edit, Editor};
 
 /// An [Editor] that merges the edits from two [Editor]s, preferring the left
 /// one.
@@ -27,5 +27,13 @@ impl<L: Editor, R: Editor> Editor for LeftBiasedOr<L, R> {
             debug_assert!(self.right.has_edit(tree, node));
             self.right.edit(source, tree, node)
         }
+    }
+
+    fn in_order_edits<'a>(
+        &'a self,
+        source: &'a [u8],
+        tree: &'a Tree,
+    ) -> Box<dyn Iterator<Item = Edit> + 'a> {
+        Box::new(default_in_order(self, source, tree))
     }
 }

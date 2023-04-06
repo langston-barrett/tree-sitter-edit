@@ -1,6 +1,7 @@
 use tree_sitter::{Node, Tree};
+use tree_sitter_traversal::{traverse, Order};
 
-use crate::editor::Editor;
+use crate::editor::{Edit, Editor};
 use crate::id::NodeId;
 
 /// An [Editor] that replaces the text of a single [Node].
@@ -18,5 +19,17 @@ impl Editor for Replace {
     fn edit(&self, _source: &[u8], tree: &Tree, node: &Node) -> Vec<u8> {
         debug_assert!(self.has_edit(tree, node));
         self.bytes.clone()
+    }
+
+    fn in_order_edits(&self, _source: &[u8], tree: &Tree) -> Box<dyn Iterator<Item = Edit>> {
+        if let Some(node) = traverse(tree.walk(), Order::Pre).find(|n| NodeId::new(n) == self.id) {
+            Box::new(std::iter::once(Edit {
+                position: node.start_byte(),
+                delete: node.end_byte() - node.start_byte(),
+                insert: self.bytes.clone(),
+            }))
+        } else {
+            Box::new(std::iter::empty())
+        }
     }
 }
