@@ -21,7 +21,7 @@ jobs:
       run: |
         rustup update
         rustup component add clippy
-    - uses: Swatinem/rust-cache@dd05243424bd5c0e585e4b55eb2d7615cdd32f1f
+    - uses: Swatinem/rust-cache@b8a6852b4f997182bdea832df3f9e153038b5191
     - name: Lint
       run: cargo clippy --profile=ci -- --deny warnings
 
@@ -30,6 +30,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - run: make doc
-    - uses: Swatinem/rust-cache@dd05243424bd5c0e585e4b55eb2d7615cdd32f1f
+    - uses: Swatinem/rust-cache@b8a6852b4f997182bdea832df3f9e153038b5191
     - run: env RUSTFLAGS="@$PWD/rustc-flags" cargo test --profile=ci --no-run
     - run: env RUSTFLAGS="@$PWD/rustc-flags" cargo test --profile=ci
