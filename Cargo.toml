@@ -20,5 +20,5 @@ incremental = false
 tree-sitter-c = "0.20"
 
 [dependencies]
-tree-sitter = "0.20"
+tree-sitter = "0.21"
 tree-sitter-traversal = "0.1"
