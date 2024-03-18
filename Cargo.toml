@@ -17,7 +17,7 @@ debug = 0
 incremental = false
 
 [dev-dependencies]
-tree-sitter-c = "0.20"
+tree-sitter-c = "0.21"
 
 [dependencies]
 tree-sitter = "0.20"
