@@ -49,7 +49,7 @@ mod tests {
     fn parse(src: &str) -> Tree {
         let mut parser = tree_sitter::Parser::new();
         parser
-            .set_language(tree_sitter_c::language())
+            .set_language(&tree_sitter_c::LANGUAGE.into())
             .expect("Error loading C grammar");
         parser.parse(src, None).expect("Failed to parse test")
     }

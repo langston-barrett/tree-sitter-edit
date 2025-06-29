@@ -1,5 +1,5 @@
 use tree_sitter::{Node, Tree};
-use tree_sitter_traversal::{traverse, Order};
+use tree_sitter_traversal2::{traverse, Order};
 
 #[derive(Debug)]
 pub struct Edit {
