@@ -51,7 +51,7 @@ use core::iter::FusedIterator;
 /// Trait which represents a stateful cursor in a n-ary tree.
 /// The cursor can be moved between nodes in the tree by the given methods,
 /// and the node which the cursor is currently pointing at can be read as well.
-pub trait Cursor {
+pub(crate) trait Cursor {
     /// The type of the nodes which the cursor points at; the cursor is always pointing
     /// at exactly one of this type.
     type Node;
@@ -128,7 +128,7 @@ impl<'a> Cursor for tree_sitter::TreeCursor<'a> {
 /// Order to iterate through a n-ary tree; for n-ary trees only
 /// Pre-order and Post-order make sense.
 #[derive(Eq, PartialEq, Hash, Debug, Copy, Clone)]
-pub enum Order {
+pub(crate) enum Order {
     Pre,
     Post,
 }
