@@ -18,7 +18,6 @@ impl Delete {
 }
 
 impl Editor for Delete {
-    #[must_use]
     fn has_edit(&self, _tree: &Tree, node: &Node<'_>) -> bool {
         self.id.is(node)
     }
