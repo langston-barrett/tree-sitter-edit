@@ -14,7 +14,6 @@ impl Id {
 }
 
 impl Editor for Id {
-    #[must_use]
     fn has_edit(&self, _tree: &Tree, _node: &Node<'_>) -> bool {
         false
     }
