@@ -6,6 +6,7 @@ mod editor;
 mod editors;
 mod id;
 mod print;
+mod traversal;
 
 pub use editor::*;
 pub use editors::*;

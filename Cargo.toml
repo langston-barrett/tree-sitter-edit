@@ -18,7 +18,7 @@ incremental = false
 
 [dev-dependencies]
 tree-sitter-c = "0.24"
+tree-sitter-rust = "0.24"
 
 [dependencies]
 tree-sitter = ">= 0.25"
-tree-sitter-traversal2 = "0.2"
