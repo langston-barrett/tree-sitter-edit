@@ -386,7 +386,10 @@ pub(crate) fn traverse_tree(
 ///
 /// `cursor` must be at the root of the tree
 /// (i.e. `cursor.goto_parent()` must return false)
-pub(crate) fn traverse<C: Cursor>(mut cursor: C, order: Order) -> impl FusedIterator<Item = C::Node> {
+pub(crate) fn traverse<C: Cursor>(
+    mut cursor: C,
+    order: Order,
+) -> impl FusedIterator<Item = C::Node> {
     assert!(!cursor.goto_parent());
     Traverse::new(cursor, order)
 }
