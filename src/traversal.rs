@@ -78,7 +78,7 @@ pub trait Cursor {
     fn node(&self) -> Self::Node;
 }
 
-impl<'a, T> Cursor for &'a mut T
+impl<T> Cursor for &mut T
 where
     T: Cursor,
 {
@@ -236,7 +236,7 @@ struct PreorderTraverse<C> {
 }
 
 impl<C> PreorderTraverse<C> {
-    pub fn new(c: C) -> Self {
+    pub(crate) fn new(c: C) -> Self {
         PreorderTraverse { cursor: Some(c) }
     }
 }
@@ -292,7 +292,7 @@ struct PostorderTraverse<C> {
 }
 
 impl<C> PostorderTraverse<C> {
-    pub fn new(c: C) -> Self {
+    pub(crate) fn new(c: C) -> Self {
         PostorderTraverse {
             cursor: Some(c),
             retracing: false,
@@ -354,7 +354,7 @@ enum TraverseInner<C> {
 }
 
 impl<C> Traverse<C> {
-    pub fn new(c: C, order: Order) -> Self {
+    pub(crate) fn new(c: C, order: Order) -> Self {
         let inner = match order {
             Order::Pre => TraverseInner::Pre(PreorderTraverse::new(c)),
             Order::Post => TraverseInner::Post(PostorderTraverse::new(c)),
@@ -365,7 +365,7 @@ impl<C> Traverse<C> {
 
 impl<'a> Traverse<tree_sitter::TreeCursor<'a>> {
     #[allow(dead_code)]
-    pub fn from_tree(tree: &'a tree_sitter::Tree, order: Order) -> Self {
+    pub(crate) fn from_tree(tree: &'a tree_sitter::Tree, order: Order) -> Self {
         Traverse::new(tree.walk(), order)
     }
 }
@@ -374,11 +374,11 @@ impl<'a> Traverse<tree_sitter::TreeCursor<'a>> {
 ///
 /// [`Tree`]: tree_sitter::Tree
 #[allow(dead_code)] // to keep our copy of this source file as close to the original as possible
-pub fn traverse_tree(
+pub(crate) fn traverse_tree(
     tree: &'_ tree_sitter::Tree,
     order: Order,
 ) -> impl FusedIterator<Item = tree_sitter::Node<'_>> {
-    return traverse(tree.walk(), order);
+    traverse(tree.walk(), order)
 }
 
 /// Traverse an n-ary tree using `cursor`, returning the nodes of the tree through an iterator
@@ -386,7 +386,7 @@ pub fn traverse_tree(
 ///
 /// `cursor` must be at the root of the tree
 /// (i.e. `cursor.goto_parent()` must return false)
-pub fn traverse<C: Cursor>(mut cursor: C, order: Order) -> impl FusedIterator<Item = C::Node> {
+pub(crate) fn traverse<C: Cursor>(mut cursor: C, order: Order) -> impl FusedIterator<Item = C::Node> {
     assert!(!cursor.goto_parent());
     Traverse::new(cursor, order)
 }
@@ -413,7 +413,6 @@ impl<C> FusedIterator for Traverse<C> where C: Cursor {}
 mod tree_sitter_tests {
     use super::*;
 
-    extern crate std;
     use std::vec::Vec;
     use tree_sitter::{Parser, Tree};
 
