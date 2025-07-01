@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - run: env RUSTFLAGS="@$PWD/rustc-flags" cargo test --profile=ci --no-run
+    - run: cargo test --no-run
 
     - uses: ncipollo/release-action@v1
       if: ${{ startsWith(github.ref, 'refs/tags/v') }}
