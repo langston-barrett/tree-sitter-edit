@@ -1,35 +1,16 @@
-name: CI
-
+name: ci
 on:
   push:
     branches:
     - main
   pull_request:
 
-env:
-  # The NAME makes it easier to copy/paste snippets from other CI configs
-  NAME: tree-sitter-edit
+permissions:
+  contents: read
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Format
-      run: cargo fmt && git diff --exit-code
-    - name: Deps
-      run: |
-        rustup update
-        rustup component add clippy
-    - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84
-    - name: Lint
-      run: cargo clippy --profile=ci -- --deny warnings
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - run: make doc
-    - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84
-    - run: env RUSTFLAGS="@$PWD/rustc-flags" cargo test --profile=ci --no-run
-    - run: env RUSTFLAGS="@$PWD/rustc-flags" cargo test --profile=ci
+  ci:
+    uses: langston-barrett/gha/.github/workflows/rust-ci.yml@2836296ce750cde5dcba9866b62f82c019de540d
+    with:
+      bench: false
+      os: ubuntu-latest

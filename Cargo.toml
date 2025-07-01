@@ -10,12 +10,6 @@ readme = "README.md"
 homepage = "https://github.com/langston-barrett/tree-sitter-edit"
 repository = "https://github.com/langston-barrett/tree-sitter-edit"
 
-# https://matklad.github.io/2021/09/04/fast-rust-builds.html#CI-Workflow
-[profile.ci]
-inherits = "dev"
-debug = 0
-incremental = false
-
 [dev-dependencies]
 tree-sitter-c = "0.24"
 tree-sitter-rust = "0.24"
