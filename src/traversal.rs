@@ -457,9 +457,9 @@ function double(x: usize) -> usize {
         parser
             .set_language(&lang)
             .expect("Error loading Rust grammar");
-        return parser
+        parser
             .parse(code, None)
-            .expect("Error parsing provided code");
+            .expect("Error parsing provided code")
     }
 
     #[test]
@@ -528,20 +528,18 @@ mod tests {
         type Node = ();
 
         fn goto_first_child(&mut self) -> bool {
-            return false;
+            false
         }
 
         fn goto_parent(&mut self) -> bool {
-            return false;
+            false
         }
 
         fn goto_next_sibling(&mut self) -> bool {
-            return false;
+            false
         }
 
-        fn node(&self) -> Self::Node {
-            ()
-        }
+        fn node(&self) -> Self::Node {}
     }
 
     #[test]

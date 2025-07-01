@@ -42,8 +42,8 @@ mod tests {
     use crate::editors::{Delete, Id, Replace};
     use crate::id::NodeId;
 
-    fn vec_str(v: &Vec<u8>) -> &str {
-        std::str::from_utf8(&v).unwrap()
+    fn vec_str(v: &[u8]) -> &str {
+        std::str::from_utf8(v).unwrap()
     }
 
     fn parse(src: &str) -> Tree {
@@ -68,14 +68,14 @@ mod tests {
     fn parse_then_render_nil() {
         let src = r#""#;
         let r = parse_then_render(src, &Id {});
-        assert_eq!(src, vec_str(&r))
+        assert_eq!(src, vec_str(&r));
     }
 
     #[test]
     fn parse_then_render_main_id() {
         let src = r#"int main(int argc, char *argv[]) { return 0; }"#;
         let r = parse_then_render(src, &Id::new());
-        assert_eq!(src, vec_str(&r))
+        assert_eq!(src, vec_str(&r));
     }
 
     #[test]
@@ -84,7 +84,7 @@ mod tests {
         let tree = parse(src);
         let editor = Delete::new(NodeId::new(&tree.root_node()));
         let r = do_render(&tree, src, &editor);
-        assert_eq!("", vec_str(&r))
+        assert_eq!("", vec_str(&r));
     }
 
     fn find_kind(tree: &Tree, node: &Node<'_>, kind: &str) -> Option<NodeId> {
@@ -110,7 +110,7 @@ mod tests {
         };
         let edited = r#"int main(int argc, char *argv[]) { return 1; }"#;
         let r = do_render(&tree, src, &editor);
-        assert_eq!(edited, vec_str(&r))
+        assert_eq!(edited, vec_str(&r));
     }
 
     #[test]
@@ -124,6 +124,6 @@ mod tests {
         };
         let edited = r#"int main(int argc, char *argv[]) { return 100 + 100000; }"#;
         let r = do_render(&tree, src, &editor);
-        assert_eq!(edited, vec_str(&r))
+        assert_eq!(edited, vec_str(&r));
     }
 }
