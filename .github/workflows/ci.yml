@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   ci:
-    uses: langston-barrett/gha/.github/workflows/rust-ci.yml@2a02a76aebfc226461aa632fe33300ba5fcf2d9d
+    uses: langston-barrett/gha/.github/workflows/rust-ci.yml@9137259cab1d86dbeae3bde37898a2dfe6a12130
     with:
       bench: false
       os: ubuntu-latest
